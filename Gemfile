@@ -2,7 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.1.3'
 gem 'faraday'
-
+gem 'ruby-debug'
+gem 'uuidtools'
 gem 'mysql2'
 gem 'execjs'
 gem 'therubyracer'
