@@ -19,7 +19,7 @@ $(document).ready(function() {
     }
     else {
       add_filter(new_subreddit);
-      var slider_html = $("<div class='slider'><div>").html(new_subreddit);
+      var slider_html = $("<div class='slider'><div>");
       slider_html.slider({
         value: 50,
         min: 10,
@@ -29,6 +29,9 @@ $(document).ready(function() {
           $("#slider-result").html(ui.value);
         }
       });
+
+      // Slider label
+      $("<span>"+new_subreddit+"</span>").appendTo("#sliders");
       slider_html.appendTo("#sliders");
     }
   });
