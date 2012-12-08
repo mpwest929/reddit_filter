@@ -12,7 +12,7 @@ module RedditClient
   end
 
   def get_simple(subreddit)
-    data=RedditClient.get(subreddit)
+    data = self.get(subreddit)
    
     simple_data=[]
     data["data"]["children"].each do |d|
@@ -21,7 +21,7 @@ module RedditClient
                       "url" => d_data["url"],
                       "score" => d_data["score"], 
                       "subreddit" => d_data["subreddit"],
-                      "hot_score" => RedditClient.hot_score(d_data["score"], d_data["created_utc"])
+                      "hot_score" => self.hot_score(d_data["score"], d_data["created_utc"])
                      }
     end
     simple_data
@@ -54,7 +54,7 @@ module RedditClient
     # subreddits is an array of subreddit names
     merged_data = []
     subreddits.each do |name, weight|
-      subreddit_data = RedditClient.get_simple(name)
+      subreddit_data = self.get_simple(name)
       if merged_data.empty?
         merged_data = subreddit_data.clone
         next
@@ -65,8 +65,8 @@ module RedditClient
       new_merged_data = []
       (0..24).each do |i|
          # TODO: Fix so that weighted scores aren't re-computed over and over again
-         sr_weighted_score = RedditClient.weighted_score(subreddit_data[sr_index], weight)
-         m_weighted_score = RedditClient.weighted_score(merged_data[m_index], subreddits[merged_data[m_index]["subreddit"]])
+         sr_weighted_score = self.weighted_score(subreddit_data[sr_index], weight)
+         m_weighted_score  = self.weighted_score(merged_data[m_index], subreddits[merged_data[m_index]["subreddit"]])
          if sr_weighted_score > m_weighted_score
            new_merged_data << subreddit_data[sr_index]
            sr_index += 1

@@ -1,14 +1,31 @@
 $(document).ready(function() {
+  var subreddit_collection = {};
+
   var refresh_articles = function() {
-    $.get("/collection.json", function(data) {
-      alert(data);
+    $.get(articles_uri(), function(results) {
+      $("#article_container").empty();
+
+      for (var index in results) {
+        var article = results[index];
+
+        $("<div class='article_div'><p>"+article.title+"</p><a href='"+article.url+"'>"+article.url+"</a></div>").appendTo("#article_container");
+      }
     });
   }
 
-  var add_filter = function(subreddit) {
-    $.post("/filters.json", "{'subreddit':'"+subreddit+"'}", function(data) {
+  var articles_uri = function() {
+    var query_param = ""
+    for (var subreddit_name in subreddit_collection) {
+      query_param += subreddit_name+"_"+subreddit_collection[subreddit_name];
+      query_param += ",";
+    }
 
-    });
+    return "/collection.json?subreddits="+query_param;
+  }
+
+  var add_filter = function(subreddit) {
+    subreddit_collection[subreddit] = 50;
+    refresh_articles();
   }
 
   $("#add_subreddit").click(function() {
@@ -18,14 +35,18 @@ $(document).ready(function() {
       alert("Please provide a subreddit");
     }
     else {
-      add_filter(new_subreddit);
-      var slider_html = $("<div class='slider'><div>");
+      var slider_html = $("<div class='slider' id='"+new_subreddit+"_slider'><div>");
       slider_html.slider({
         value: 50,
         min: 10,
         max: 100,
-        step: 10,
+        step: 5,
         slide: function(e, ui) {
+          var slider_id      = $(this).attr('id');
+          var subreddit_name = slider_id.split("_")[0]; 
+          subreddit_collection[subreddit_name] = ui.value;
+
+          refresh_articles();
           $("#slider-result").html(ui.value);
         }
       });
@@ -33,6 +54,10 @@ $(document).ready(function() {
       // Slider label
       $("<span>"+new_subreddit+"</span>").appendTo("#sliders");
       slider_html.appendTo("#sliders");
+
+      add_filter(new_subreddit);
     }
+
+    $("#subreddit").val('');
   });
 });
